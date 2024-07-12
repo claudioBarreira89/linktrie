@@ -15,8 +15,8 @@ contract YourContract is AccessControl {
 
     mapping(address => UserProfile) public userProfiles;
 
-    event ProfileCreated(address indexed user, string username, string profileUrl);
-    event ProfileUpdated(address indexed user, string username, string profileUrl);
+    event ProfileCreated(address indexed user, string username);
+    event ProfileUpdated(address indexed user, string username);
     event LinkAdded(address indexed user, string key, string value);
     event LinkRemoved(address indexed user, string key);
 
@@ -24,16 +24,14 @@ contract YourContract is AccessControl {
         _setupRole(PROFILE_ADMIN_ROLE, msg.sender);
     }
 
-    function createProfile(string memory _username, string memory _profileUrl) public {
+    function createProfile(string memory _username) public {
         require(bytes(_username).length > 0, "Username cannot be empty");
-        require(bytes(_profileUrl).length > 0, "Profile URL cannot be empty");
         require(userProfiles[msg.sender].linkKeys.length == 0, "Profile already exists");
 
         UserProfile storage profile = userProfiles[msg.sender];
         profile.username = _username;
-        profile.profileUrl = _profileUrl;
 
-        emit ProfileCreated(msg.sender, _username, _profileUrl);
+        emit ProfileCreated(msg.sender, _username);
     }
 
     function updateProfile(string memory _username, string memory _profileUrl) public {
@@ -42,7 +40,7 @@ contract YourContract is AccessControl {
         profile.username = _username;
         profile.profileUrl = _profileUrl;
 
-        emit ProfileUpdated(msg.sender, _username, _profileUrl);
+        emit ProfileUpdated(msg.sender, _username);
     }
 
     function addLink(string memory _key, string memory _value) public {
