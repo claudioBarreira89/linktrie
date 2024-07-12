@@ -20,8 +20,6 @@ const Home: NextPage = () => {
     }
 
     await writeContractAsync({
-      // address: deployedContracts[31337].YourContract.address,
-      // abi: deployedContracts[31337].YourContract.abi,
       functionName: "createProfile",
       args: [value],
     });

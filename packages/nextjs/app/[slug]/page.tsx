@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import classNames from "classnames";
 import type { NextPage } from "next";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
 
 // import { useWriteContract } from "wagmi";
 // import deployedContracts from "~~/contracts/deployedContracts";
@@ -13,14 +14,39 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const Page: NextPage = ({ params }: any) => {
   const [openModal, setOpenModal] = useState(false);
+  const [linkName, setLinkName] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
 
-  const { data } = useScaffoldReadContract({
+  const { data, refetch } = useScaffoldReadContract({
     contractName: "YourContract",
     functionName: "getUserProfileByTrie",
     args: [params.slug || ""],
   });
 
+  // const { data: isAdmin } = useScaffoldReadContract({
+  //   contractName: "YourContract",
+  //   functionName: "isAdmin",
+  //   args: [params.slug || ""],
+  // });
+
+  const { writeContractAsync } = useScaffoldWriteContract("YourContract");
+
   const [, , linkNames, linkUrls] = data || [];
+
+  const handleAddLink = async () => {
+    if (!linkName || !linkUrl) {
+      notification.error("Please fill in all fields");
+      return;
+    }
+
+    await writeContractAsync({
+      functionName: "addLink",
+      args: [linkName, linkUrl],
+    });
+
+    setOpenModal(false);
+    refetch();
+  };
 
   // const { writeContractAsync } = useScaffoldWriteContract("YourContract");
   // const { data: result, isPending, writeContractAsync } = useWriteContract();
@@ -45,15 +71,31 @@ const Page: NextPage = ({ params }: any) => {
         className={classNames("modal", {
           ["modal-open"]: openModal,
         })}
-        onClick={() => setOpenModal(false)}
+        onClick={() => {
+          setOpenModal(false);
+          setLinkName("");
+          setLinkUrl("");
+        }}
       >
         <div onClick={e => e.stopPropagation()} className="modal-box bg-white">
           <div className="flex flex-col gap-4">
             <h1 className="text-2xl text-gray-900">Add new link</h1>
-            <input className="input input-bordered input-secondary bg-white" placeholder="Link name" />
-            <input className="input input-bordered input-secondary bg-white" placeholder="Link url" />
+            <input
+              className="input input-bordered input-secondary bg-white text-gray-900"
+              placeholder="Link name"
+              value={linkName}
+              onChange={e => setLinkName(e.target.value)}
+            />
+            <input
+              className="input input-bordered input-secondary bg-white text-gray-900"
+              placeholder="Link url"
+              value={linkUrl}
+              onChange={e => setLinkUrl(e.target.value)}
+            />
 
-            <button className="btn">Submit</button>
+            <button className="btn" onClick={handleAddLink}>
+              Submit
+            </button>
           </div>
         </div>
       </div>
