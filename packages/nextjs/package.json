@@ -28,6 +28,7 @@
     "@uniswap/v2-sdk": "^3.0.1",
     "blo": "^1.2.0",
     "burner-connector": "^0.0.8",
+    "classnames": "^2.5.1",
     "daisyui": "4.5.0",
     "ethers": "^5.7.2",
     "next": "^14.0.4",
