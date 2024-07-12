@@ -1,87 +1,90 @@
-//SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0 <0.9.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-// Useful for debugging. Remove when deploying to a live network.
-import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-// Use openzeppelin to inherit battle-tested implementations (ERC20, ERC721, etc)
-// import "@openzeppelin/contracts/access/Ownable.sol";
+contract YourContract is AccessControl {
+    bytes32 public constant PROFILE_ADMIN_ROLE = keccak256("PROFILE_ADMIN_ROLE");
 
-/**
- * A smart contract that allows changing a state variable of the contract and tracking the changes
- * It also allows the owner to withdraw the Ether in the contract
- * @author BuidlGuidl
- */
-contract YourContract {
-	// State Variables
-	address public immutable owner;
-	string public greeting = "Building Unstoppable Apps!!!";
-	bool public premium = false;
-	uint256 public totalCounter = 0;
-	mapping(address => uint) public userGreetingCounter;
+    struct UserProfile {
+        string username;
+        mapping(string => string) links;
+        string[] linkKeys;
+    }
 
-	// Events: a way to emit log statements from smart contract that can be listened to by external parties
-	event GreetingChange(
-		address indexed greetingSetter,
-		string newGreeting,
-		bool premium,
-		uint256 value
-	);
+    mapping(address => UserProfile) public userProfiles;
 
-	// Constructor: Called once on contract deployment
-	// Check packages/hardhat/deploy/00_deploy_your_contract.ts
-	constructor(address _owner) {
-		owner = _owner;
-	}
+    event ProfileCreated(address indexed user, string username);
+    event LinkAdded(address indexed user, string key, string value);
+    event LinkRemoved(address indexed user, string key);
 
-	// Modifier: used to define a set of rules that must be met before or after a function is executed
-	// Check the withdraw() function
-	modifier isOwner() {
-		// msg.sender: predefined variable that represents address of the account that called the current function
-		require(msg.sender == owner, "Not the Owner");
-		_;
-	}
+    constructor() {
+        _setupRole(PROFILE_ADMIN_ROLE, msg.sender);
+    }
 
-	/**
-	 * Function that allows anyone to change the state variable "greeting" of the contract and increase the counters
-	 *
-	 * @param _newGreeting (string memory) - new greeting to save on the contract
-	 */
-	function setGreeting(string memory _newGreeting) public payable {
-		// Print data to the hardhat chain console. Remove when deploying to a live network.
-		console.log(
-			"Setting new greeting '%s' from %s",
-			_newGreeting,
-			msg.sender
-		);
+    function createProfile(string memory _username) public {
+        require(bytes(_username).length > 0, "Username cannot be empty");
+        require(userProfiles[msg.sender].linkKeys.length == 0, "Profile already exists");
 
-		// Change state variables
-		greeting = _newGreeting;
-		totalCounter += 1;
-		userGreetingCounter[msg.sender] += 1;
+        UserProfile storage profile = userProfiles[msg.sender];
+        profile.username = _username;
 
-		// msg.value: built-in global variable that represents the amount of ether sent with the transaction
-		if (msg.value > 0) {
-			premium = true;
-		} else {
-			premium = false;
-		}
+        emit ProfileCreated(msg.sender, _username);
+    }
 
-		// emit: keyword used to trigger an event
-		emit GreetingChange(msg.sender, _newGreeting, msg.value > 0, msg.value);
-	}
+    function addLink(string memory _key, string memory _value) public {
+        require(bytes(_key).length > 0, "Link key cannot be empty");
+        require(bytes(_value).length > 0, "Link value cannot be empty");
+        require(userProfiles[msg.sender].linkKeys.length < 10, "Maximum of 10 links allowed");
 
-	/**
-	 * Function that allows the owner to withdraw all the Ether in the contract
-	 * The function can only be called by the owner of the contract as defined by the isOwner modifier
-	 */
-	function withdraw() public isOwner {
-		(bool success, ) = owner.call{ value: address(this).balance }("");
-		require(success, "Failed to send Ether");
-	}
+        UserProfile storage profile = userProfiles[msg.sender];
+        profile.links[_key] = _value;
+        profile.linkKeys.push(_key);
 
-	/**
-	 * Function that allows the contract to receive ETH
-	 */
-	receive() external payable {}
+        emit LinkAdded(msg.sender, _key, _value);
+    }
+
+    function removeLink(string memory _key) public {
+        UserProfile storage profile = userProfiles[msg.sender];
+        require(bytes(profile.links[_key]).length > 0, "Link not found");
+
+        uint256 linkIndex = findLinkIndex(profile.linkKeys, _key);
+        require(linkIndex < profile.linkKeys.length, "Link not found");
+
+        for (uint256 i = linkIndex; i < profile.linkKeys.length - 1; i++) {
+            profile.linkKeys[i] = profile.linkKeys[i + 1];
+        }
+        profile.linkKeys.pop();
+
+        delete profile.links[_key];
+
+        emit LinkRemoved(msg.sender, _key);
+    }
+
+    function getUserLinks(address _user) public view returns (string[] memory, string[] memory) {
+        UserProfile storage profile = userProfiles[_user];
+        return (profile.linkKeys, getLinksValues(profile));
+    }
+
+    function findLinkIndex(string[] memory keys, string memory key) internal pure returns (uint256) {
+        for (uint256 i = 0; i < keys.length; i++) {
+            if (keccak256(abi.encodePacked(keys[i])) == keccak256(abi.encodePacked(key))) {
+                return i;
+            }
+        }
+        return keys.length;
+    }
+
+    function getLinksValues(UserProfile storage profile) internal view returns (string[] memory) {
+        string[] memory values = new string[](profile.linkKeys.length);
+        for (uint256 i = 0; i < profile.linkKeys.length; i++) {
+            values[i] = profile.links[profile.linkKeys[i]];
+        }
+        return values;
+    }
+
+    modifier onlyProfileAdmin() {
+        require(hasRole(PROFILE_ADMIN_ROLE, msg.sender), "Caller is not a profile admin");
+        _;
+    }
 }
