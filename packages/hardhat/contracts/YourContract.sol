@@ -49,6 +49,8 @@ contract YourContract is AccessControl {
 	}
 
 	function addLink(string memory _key, string memory _value) public {
+        // Require that user profile exists
+        require(bytes(userProfiles[msg.sender].username).length > 0, "Profile does not exist");
 		require(bytes(_key).length > 0, "Link key cannot be empty");
 		require(bytes(_value).length > 0, "Link value cannot be empty");
 		require(
