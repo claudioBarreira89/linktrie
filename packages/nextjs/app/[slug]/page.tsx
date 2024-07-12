@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import classNames from "classnames";
 import type { NextPage } from "next";
+import { useAccount } from "wagmi";
+import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -14,8 +15,10 @@ import { notification } from "~~/utils/scaffold-eth";
 
 const Page: NextPage = ({ params }: any) => {
   const [openModal, setOpenModal] = useState(false);
+
   const [linkName, setLinkName] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+  const { address } = useAccount();
 
   const { data, refetch } = useScaffoldReadContract({
     contractName: "YourContract",
@@ -31,7 +34,7 @@ const Page: NextPage = ({ params }: any) => {
 
   const { writeContractAsync } = useScaffoldWriteContract("YourContract");
 
-  const [, , linkNames, linkUrls] = data || [];
+  const [owner, , , linkNames, linkUrls] = data || [];
 
   const handleAddLink = async () => {
     if (!linkName || !linkUrl) {
@@ -48,23 +51,42 @@ const Page: NextPage = ({ params }: any) => {
     refetch();
   };
 
+  const handleRemoveLink = async (key: any) => {
+    await writeContractAsync({
+      functionName: "removeLink",
+      args: [key],
+    });
+
+    refetch();
+  };
+
   // const { writeContractAsync } = useScaffoldWriteContract("YourContract");
   // const { data: result, isPending, writeContractAsync } = useWriteContract();
+
+  const isAdmin = address === owner;
 
   return (
     <div className="flex max-w-2xl flex-col pt-10 m-auto gap-10 w-full p-4">
       <div className="flex flex-col gap-6 text-center">
-        <h1 className="text-5xl">Username</h1>
+        <h1 className="text-5xl">@{params.slug}</h1>
 
         <div className="gap-4 flex flex-col">
           {linkNames?.map((name, i) => (
-            <LinkItem key={i} name={name} url={linkUrls?.[i] || ""} />
+            <LinkItem
+              key={i}
+              name={name}
+              url={linkUrls?.[i] || ""}
+              isAdmin={isAdmin}
+              handleRemoveLink={handleRemoveLink}
+            />
           ))}
         </div>
 
-        <button className="btn btn-secondary" onClick={() => setOpenModal(true)}>
-          + Add new
-        </button>
+        {isAdmin && (
+          <button className="btn btn-secondary" onClick={() => setOpenModal(true)}>
+            + Add new
+          </button>
+        )}
       </div>
 
       <div
@@ -103,13 +125,41 @@ const Page: NextPage = ({ params }: any) => {
   );
 };
 
-const LinkItem = ({ name, url }: { name: string; url: string }) => {
+const LinkItem = ({
+  name,
+  url,
+  isAdmin,
+  handleRemoveLink,
+}: {
+  name: string;
+  url: string;
+  isAdmin: boolean;
+  handleRemoveLink: any;
+}) => {
+  const handleOpenLink = () => {
+    window.open(url, "_blank");
+  };
+
   return (
-    <Link href={url} target="_blank">
-      <div className="transition-all bg-gray-200 cursor-pointer hover:-top-2 top-0 relative hover:bg-white border-4 shadow-lg shadow-gray-800 border-b-8 border-gray-800 p-6 text-gray-900 text-2xl">
-        {name}
+    <div className="relative" onClick={handleOpenLink}>
+      <div className="transition-all bg-gray-200 cursor-pointer hover:-top-1 top-0 relative hover:bg-white border-4 shadow-lg shadow-gray-800 border-b-8 border-gray-800 p-6 text-gray-900 text-2xl">
+        <div className="flex justify-between items-center">
+          <div className="flex-1">{name}</div>
+          {isAdmin && (
+            <div className="dropdown dropdown-end" onClick={e => e.stopPropagation()}>
+              <div tabIndex={0} role="button" className="px-2 py-1">
+                <EllipsisVerticalIcon className="w-6 h-6" />
+              </div>
+              <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow">
+                <li onClick={() => handleRemoveLink(name)}>
+                  <a>Remove</a>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
