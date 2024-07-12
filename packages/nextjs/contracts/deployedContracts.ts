@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     YourContract: {
-      address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      address: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
       abi: [
         {
           inputs: [],
@@ -284,6 +284,40 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "string",
+              name: "_trie",
+              type: "string",
+            },
+          ],
+          name: "getUserProfile",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+            {
+              internalType: "string[]",
+              name: "",
+              type: "string[]",
+            },
+            {
+              internalType: "string[]",
+              name: "",
+              type: "string[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes32",
               name: "role",
               type: "bytes32",
@@ -428,6 +462,25 @@ const deployedContracts = {
               internalType: "string",
               name: "profileUrl",
               type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          name: "usernames",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
             },
           ],
           stateMutability: "view",

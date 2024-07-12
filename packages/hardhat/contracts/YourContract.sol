@@ -4,98 +4,144 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract YourContract is AccessControl {
-    bytes32 public constant PROFILE_ADMIN_ROLE = keccak256("PROFILE_ADMIN_ROLE");
+	bytes32 public constant PROFILE_ADMIN_ROLE =
+		keccak256("PROFILE_ADMIN_ROLE");
 
-    struct UserProfile {
-        string username;
-        string profileUrl;
-        mapping(string => string) links;
-        string[] linkKeys;
-    }
+	struct UserProfile {
+		string username;
+		string profileUrl;
+		mapping(string => string) links;
+		string[] linkKeys;
+	}
+	mapping(string => address) public usernames;
+	mapping(address => UserProfile) public userProfiles;
 
-    mapping(address => UserProfile) public userProfiles;
+	event ProfileCreated(address indexed user, string username);
+	event ProfileUpdated(address indexed user, string username);
+	event LinkAdded(address indexed user, string key, string value);
+	event LinkRemoved(address indexed user, string key);
 
-    event ProfileCreated(address indexed user, string username);
-    event ProfileUpdated(address indexed user, string username);
-    event LinkAdded(address indexed user, string key, string value);
-    event LinkRemoved(address indexed user, string key);
+	constructor() {
+		_setupRole(PROFILE_ADMIN_ROLE, msg.sender);
+	}
 
-    constructor() {
-        _setupRole(PROFILE_ADMIN_ROLE, msg.sender);
-    }
+	function createProfile(string memory _username) public {
+		require(usernames[_username] == address(0), "Username taken");
+		require(bytes(_username).length > 0, "Username cannot be empty");
+		// require(userProfiles[msg.sender].linkKeys.length == 0, "Profile already exists");
+		usernames[_username] = msg.sender;
+		UserProfile storage profile = userProfiles[msg.sender];
+		profile.username = _username;
 
-    function createProfile(string memory _username) public {
-        require(bytes(_username).length > 0, "Username cannot be empty");
-        require(userProfiles[msg.sender].linkKeys.length == 0, "Profile already exists");
+		emit ProfileCreated(msg.sender, _username);
+	}
 
-        UserProfile storage profile = userProfiles[msg.sender];
-        profile.username = _username;
+	function updateProfile(
+		string memory _username,
+		string memory _profileUrl
+	) public {
+		require(userProfiles[msg.sender].linkKeys.length == 0, "Name taken");
+		UserProfile storage profile = userProfiles[msg.sender];
+		profile.username = _username;
+		profile.profileUrl = _profileUrl;
 
-        emit ProfileCreated(msg.sender, _username);
-    }
+		emit ProfileUpdated(msg.sender, _username);
+	}
 
-    function updateProfile(string memory _username, string memory _profileUrl) public {
-        require(userProfiles[msg.sender].linkKeys.length == 0, "Name taken");
-        UserProfile storage profile = userProfiles[msg.sender];
-        profile.username = _username;
-        profile.profileUrl = _profileUrl;
+	function addLink(string memory _key, string memory _value) public {
+		require(bytes(_key).length > 0, "Link key cannot be empty");
+		require(bytes(_value).length > 0, "Link value cannot be empty");
+		require(
+			userProfiles[msg.sender].linkKeys.length < 10,
+			"Maximum of 10 links allowed"
+		);
 
-        emit ProfileUpdated(msg.sender, _username);
-    }
+		UserProfile storage profile = userProfiles[msg.sender];
+		profile.links[_key] = _value;
+		profile.linkKeys.push(_key);
 
-    function addLink(string memory _key, string memory _value) public {
-        require(bytes(_key).length > 0, "Link key cannot be empty");
-        require(bytes(_value).length > 0, "Link value cannot be empty");
-        require(userProfiles[msg.sender].linkKeys.length < 10, "Maximum of 10 links allowed");
+		emit LinkAdded(msg.sender, _key, _value);
+	}
 
-        UserProfile storage profile = userProfiles[msg.sender];
-        profile.links[_key] = _value;
-        profile.linkKeys.push(_key);
+	function removeLink(string memory _key) public {
+		UserProfile storage profile = userProfiles[msg.sender];
+		require(bytes(profile.links[_key]).length > 0, "Link not found");
 
-        emit LinkAdded(msg.sender, _key, _value);
-    }
+		uint256 linkIndex = findLinkIndex(profile.linkKeys, _key);
+		require(linkIndex < profile.linkKeys.length, "Link not found");
 
-    function removeLink(string memory _key) public {
-        UserProfile storage profile = userProfiles[msg.sender];
-        require(bytes(profile.links[_key]).length > 0, "Link not found");
+		for (uint256 i = linkIndex; i < profile.linkKeys.length - 1; i++) {
+			profile.linkKeys[i] = profile.linkKeys[i + 1];
+		}
+		profile.linkKeys.pop();
 
-        uint256 linkIndex = findLinkIndex(profile.linkKeys, _key);
-        require(linkIndex < profile.linkKeys.length, "Link not found");
+		delete profile.links[_key];
 
-        for (uint256 i = linkIndex; i < profile.linkKeys.length - 1; i++) {
-            profile.linkKeys[i] = profile.linkKeys[i + 1];
-        }
-        profile.linkKeys.pop();
+		emit LinkRemoved(msg.sender, _key);
+	}
 
-        delete profile.links[_key];
+	function getUserProfile(
+		string memory _trie
+	)
+		public
+		view
+		returns (string memory, string memory, string[] memory, string[] memory)
+	{
+		UserProfile storage profile = userProfiles[usernames[_trie]];
+		return (
+			profile.username,
+			profile.profileUrl,
+			profile.linkKeys,
+			getLinksValues(profile)
+		);
+	}
 
-        emit LinkRemoved(msg.sender, _key);
-    }
+	function getUserProfile(
+		address _user
+	)
+		public
+		view
+		returns (string memory, string memory, string[] memory, string[] memory)
+	{
+		UserProfile storage profile = userProfiles[_user];
+		return (
+			profile.username,
+			profile.profileUrl,
+			profile.linkKeys,
+			getLinksValues(profile)
+		);
+	}
 
-    function getUserProfile(address _user) public view returns (string memory, string memory, string[] memory, string[] memory) {
-        UserProfile storage profile = userProfiles[_user];
-        return (profile.username, profile.profileUrl, profile.linkKeys, getLinksValues(profile));
-    }
+	function findLinkIndex(
+		string[] memory keys,
+		string memory key
+	) internal pure returns (uint256) {
+		for (uint256 i = 0; i < keys.length; i++) {
+			if (
+				keccak256(abi.encodePacked(keys[i])) ==
+				keccak256(abi.encodePacked(key))
+			) {
+				return i;
+			}
+		}
+		return keys.length;
+	}
 
-    function findLinkIndex(string[] memory keys, string memory key) internal pure returns (uint256) {
-        for (uint256 i = 0; i < keys.length; i++) {
-            if (keccak256(abi.encodePacked(keys[i])) == keccak256(abi.encodePacked(key))) {
-                return i;
-            }
-        }
-        return keys.length;
-    }
+	function getLinksValues(
+		UserProfile storage profile
+	) internal view returns (string[] memory) {
+		string[] memory values = new string[](profile.linkKeys.length);
+		for (uint256 i = 0; i < profile.linkKeys.length; i++) {
+			values[i] = profile.links[profile.linkKeys[i]];
+		}
+		return values;
+	}
 
-    function getLinksValues(UserProfile storage profile) internal view returns (string[] memory) {
-        string[] memory values = new string[](profile.linkKeys.length);
-        for (uint256 i = 0; i < profile.linkKeys.length; i++) {
-            values[i] = profile.links[profile.linkKeys[i]];
-        }
-        return values;
-    }
-
-    modifier onlyProfileAdmin() {
-        require(hasRole(PROFILE_ADMIN_ROLE, msg.sender), "Caller is not a profile admin");
-        _;
-    }
+	modifier onlyProfileAdmin() {
+		require(
+			hasRole(PROFILE_ADMIN_ROLE, msg.sender),
+			"Caller is not a profile admin"
+		);
+		_;
+	}
 }
