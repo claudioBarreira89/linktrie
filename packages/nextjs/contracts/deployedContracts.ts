@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     YourContract: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
       abi: [
         {
           inputs: [],
@@ -73,8 +73,39 @@ const deployedContracts = {
               name: "username",
               type: "string",
             },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "profileUrl",
+              type: "string",
+            },
           ],
           name: "ProfileCreated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "username",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "profileUrl",
+              type: "string",
+            },
+          ],
+          name: "ProfileUpdated",
           type: "event",
         },
         {
@@ -203,6 +234,11 @@ const deployedContracts = {
               name: "_username",
               type: "string",
             },
+            {
+              internalType: "string",
+              name: "_profileUrl",
+              type: "string",
+            },
           ],
           name: "createProfile",
           outputs: [],
@@ -236,8 +272,18 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "getUserLinks",
+          name: "getUserProfile",
           outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
             {
               internalType: "string[]",
               name: "",
@@ -365,6 +411,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "string",
+              name: "_username",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_profileUrl",
+              type: "string",
+            },
+          ],
+          name: "updateProfile",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "address",
               name: "",
               type: "address",
@@ -375,6 +439,11 @@ const deployedContracts = {
             {
               internalType: "string",
               name: "username",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "profileUrl",
               type: "string",
             },
           ],

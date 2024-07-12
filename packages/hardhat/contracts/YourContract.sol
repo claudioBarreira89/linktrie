@@ -8,13 +8,15 @@ contract YourContract is AccessControl {
 
     struct UserProfile {
         string username;
+        string profileUrl;
         mapping(string => string) links;
         string[] linkKeys;
     }
 
     mapping(address => UserProfile) public userProfiles;
 
-    event ProfileCreated(address indexed user, string username);
+    event ProfileCreated(address indexed user, string username, string profileUrl);
+    event ProfileUpdated(address indexed user, string username, string profileUrl);
     event LinkAdded(address indexed user, string key, string value);
     event LinkRemoved(address indexed user, string key);
 
@@ -22,14 +24,24 @@ contract YourContract is AccessControl {
         _setupRole(PROFILE_ADMIN_ROLE, msg.sender);
     }
 
-    function createProfile(string memory _username) public {
+    function createProfile(string memory _username, string memory _profileUrl) public {
         require(bytes(_username).length > 0, "Username cannot be empty");
+        require(bytes(_profileUrl).length > 0, "Profile URL cannot be empty");
         require(userProfiles[msg.sender].linkKeys.length == 0, "Profile already exists");
 
         UserProfile storage profile = userProfiles[msg.sender];
         profile.username = _username;
+        profile.profileUrl = _profileUrl;
 
-        emit ProfileCreated(msg.sender, _username);
+        emit ProfileCreated(msg.sender, _username, _profileUrl);
+    }
+
+    function updateProfile(string memory _username, string memory _profileUrl) public {
+        UserProfile storage profile = userProfiles[msg.sender];
+        profile.username = _username;
+        profile.profileUrl = _profileUrl;
+
+        emit ProfileUpdated(msg.sender, _username, _profileUrl);
     }
 
     function addLink(string memory _key, string memory _value) public {
@@ -61,9 +73,9 @@ contract YourContract is AccessControl {
         emit LinkRemoved(msg.sender, _key);
     }
 
-    function getUserLinks(address _user) public view returns (string[] memory, string[] memory) {
+    function getUserProfile(address _user) public view returns (string memory, string memory, string[] memory, string[] memory) {
         UserProfile storage profile = userProfiles[_user];
-        return (profile.linkKeys, getLinksValues(profile));
+        return (profile.username, profile.profileUrl, profile.linkKeys, getLinksValues(profile));
     }
 
     function findLinkIndex(string[] memory keys, string memory key) internal pure returns (uint256) {
