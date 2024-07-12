@@ -80,7 +80,7 @@ contract YourContract is AccessControl {
 		emit LinkRemoved(msg.sender, _key);
 	}
 
-	function getUserProfile(
+	function getUserProfileByTrie(
 		string memory _trie
 	)
 		public
