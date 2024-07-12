@@ -8,6 +8,7 @@ contract YourContract is AccessControl {
 		keccak256("PROFILE_ADMIN_ROLE");
 
 	struct UserProfile {
+        address owner;
 		string username;
 		string profileUrl;
 		mapping(string => string) links;
@@ -32,6 +33,7 @@ contract YourContract is AccessControl {
 		usernames[_username] = msg.sender;
 		UserProfile storage profile = userProfiles[msg.sender];
 		profile.username = _username;
+        profile.owner = msg.sender;
 
 		emit ProfileCreated(msg.sender, _username);
 	}
@@ -42,6 +44,7 @@ contract YourContract is AccessControl {
 	) public {
 		require(userProfiles[msg.sender].linkKeys.length == 0, "Name taken");
 		UserProfile storage profile = userProfiles[msg.sender];
+        require(profile.owner == msg.sender, "Only owner can update profile");
 		profile.username = _username;
 		profile.profileUrl = _profileUrl;
 
@@ -59,6 +62,7 @@ contract YourContract is AccessControl {
 		);
 
 		UserProfile storage profile = userProfiles[msg.sender];
+        
 		profile.links[_key] = _value;
 		profile.linkKeys.push(_key);
 
@@ -87,10 +91,11 @@ contract YourContract is AccessControl {
 	)
 		public
 		view
-		returns (string memory, string memory, string[] memory, string[] memory)
+		returns (address, string memory, string memory, string[] memory, string[] memory)
 	{
 		UserProfile storage profile = userProfiles[usernames[_trie]];
 		return (
+            profile.owner,
 			profile.username,
 			profile.profileUrl,
 			profile.linkKeys,
@@ -103,10 +108,11 @@ contract YourContract is AccessControl {
 	)
 		public
 		view
-		returns (string memory, string memory, string[] memory, string[] memory)
+		returns (address, string memory, string memory, string[] memory, string[] memory)
 	{
 		UserProfile storage profile = userProfiles[_user];
 		return (
+            profile.owner,
 			profile.username,
 			profile.profileUrl,
 			profile.linkKeys,
