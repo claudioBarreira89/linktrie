@@ -37,6 +37,7 @@ contract YourContract is AccessControl {
     }
 
     function updateProfile(string memory _username, string memory _profileUrl) public {
+        require(userProfiles[msg.sender].linkKeys.length == 0, "Name taken");
         UserProfile storage profile = userProfiles[msg.sender];
         profile.username = _username;
         profile.profileUrl = _profileUrl;
