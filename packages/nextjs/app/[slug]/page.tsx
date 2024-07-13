@@ -153,7 +153,7 @@ const LinkItem = ({
 
   return (
     <div className="relative" onClick={handleOpenLink}>
-      <div className="transition-all bg-gray-200 cursor-pointer hover:-top-1 top-0 relative hover:bg-white border-4 shadow-lg shadow-gray-800 border-b-8 border-gray-800 p-6 text-gray-900 text-2xl">
+      <div className="transition-all bg-gray-200 cursor-pointer hover:-top-1 top-0 relative hover:bg-white border-4 shadow-lg shadow-gray-800 border-b-7 border-gray-800 p-3 text-gray-900 text-2xl">
         <div className="flex justify-between items-center">
           <div className="flex-1">{name}</div>
           {isAdmin && (
