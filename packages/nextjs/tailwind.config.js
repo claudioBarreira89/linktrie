@@ -43,9 +43,9 @@ module.exports = {
         dark: {
           primary: "#212638",
           "primary-content": "#F9FBFF",
-          secondary: "#323f61",
+          secondary: "#264f1a",
           "secondary-content": "#F9FBFF",
-          accent: "#4969A6",
+          accent: "#e8c0e9",
           "accent-content": "#F9FBFF",
           neutral: "#F9FBFF",
           "neutral-content": "#385183",
@@ -76,6 +76,10 @@ module.exports = {
   },
   theme: {
     extend: {
+      colors: {
+        salad: "#d2e823",
+        bggreen: "#264f1a",
+      },
       boxShadow: {
         center: "0 0 12px -2px rgb(0 0 0 / 0.05)",
       },

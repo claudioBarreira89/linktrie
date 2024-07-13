@@ -4,8 +4,9 @@ import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
-  title: "Scaffold-ETH 2 App",
-  description: "Built with 🏗 Scaffold-ETH 2",
+  title: "Linktrie | Link everything you are",
+  description:
+    "Linktrie makes room for all of you. Get everything you create, curate and share, wherever it’s scattered online, and put it back together again in one place – your Linktree – where it can be discovered with ease.",
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {

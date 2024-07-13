@@ -26,25 +26,27 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-col pt-10 m-auto gap-10 w-full p-4">
-      <div className="flex flex-col gap-2 max-w-2xl">
-        <h1 className="text-5xl">Everything you are. On-chain!</h1>
-        <h2 className="text-xl">
-          Join the future of link sharing with our blockchain-powered platform. Use one secure, decentralized link to
-          share everything you create, and sell from your Farecaster, Linkedin, X, YouTube, and other social media
-          profiles. Experience the power of on-chain technology for your link in bio needs.
-        </h2>
-      </div>
-      <div className="flex flex-grow flex-row gap-2 max-w-lg">
-        <input
-          className="input min-w-28 w-full"
-          placeholder="Insert value"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
-        <button className="btn btn-secondary" onClick={handleCreateProfile}>
-          Claim your Linktrie
-        </button>
+    <div className="flex flex-col items-center gap-10 w-full bg-bggreen py-24 text-salad">
+      <div className="max-w-[1350px] w-full">
+        <div className="flex flex-col gap-2 max-w-2xl">
+          <h1 className="text-5xl font-bold">Everything you are. On-chain!</h1>
+          <h2 className="text-lg">
+            Join the future of link sharing with our blockchain-powered platform. Use one secure, decentralized link to
+            share everything you create, and sell from your Farecaster, Linkedin, X, YouTube, and other social media
+            profiles. Experience the power of on-chain technology for your link in bio needs.
+          </h2>
+        </div>
+        <div className="flex flex-grow flex-row gap-2 max-w-lg mt-8">
+          <input
+            className="input min-w-32 max-w-64 w-full bg-white rounded-md"
+            placeholder="Insert value"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+          />
+          <button className="btn bg-[#e8c0e9] hover:bg-[#e2bae4] text-black" onClick={handleCreateProfile}>
+            Claim your Linktrie
+          </button>
+        </div>
       </div>
     </div>
   );
