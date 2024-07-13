@@ -20,13 +20,13 @@ export const sendTransaction = async (
     const walletClient = wallet.connector.getWalletClient<WalletClient<Transport, Chain, Account>>();
 
     const chainID = await wallet.connector.getNetwork();
-    const currentNetwork = networkConfigurations.evm?.find(network => network.chainId === chainID);
+    const currentNetwork = networkConfigurations.evm?.find((network: any) => network.chainId === chainID);
 
     if (!currentNetwork) {
       throw new Error("Network not found");
     }
 
-    const chain = getOrMapViemChain(currentNetwork);
+    const chain = getOrMapViemChain(currentNetwork as any);
 
     const transaction = {
       account: wallet.address as Hex,
