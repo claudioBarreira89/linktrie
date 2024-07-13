@@ -1,35 +1,34 @@
 import { getOrMapViemChain } from "@dynamic-labs/viem-utils";
 import { Chain, createClient, http } from "viem";
-import {
-  arbitrum,
-  arbitrumSepolia,
-  base,
-  baseSepolia,
-  hardhat,
-  mainnet,
-  polygon,
-  polygonAmoy,
-  scroll,
-  scrollSepolia,
-  sepolia,
-} from "viem/chains";
+import { baseSepolia, sepolia } from "viem/chains";
 import { createConfig } from "wagmi";
 import { customEvmNetworks } from "~~/lib/networks";
 import scaffoldConfig from "~~/scaffold.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
 export const wagmiConfig = createConfig({
-  chains: [baseSepolia],
+  chains: [
+    baseSepolia,
+    sepolia,
+    {
+      blockExplorerUrls: ["https://explorer.testnet.rsk.co"],
+      chainId: 31,
+      name: "RSK Testnet",
+      rpcUrls: ["https://public-node.testnet.rsk.co"],
+      iconUrls: ["https://rootstock.io/icons/icon-512x512.png?v=d5199ca8e8f274bc01b19fe9024f128e"],
+      nativeCurrency: {
+        name: "Rootstock Bitcoin",
+        symbol: "tRBTC",
+        decimals: 18,
+      },
+      networkId: 31,
+    },
+  ],
   // ssr: true,
   client({ chain }) {
     return createClient({
       chain,
       transport: http(getAlchemyHttpUrl(chain.id)),
-      ...(chain.id !== (hardhat as Chain).id
-        ? {
-            pollingInterval: scaffoldConfig.pollingInterval,
-          }
-        : {}),
     });
   },
 });
