@@ -81,11 +81,13 @@ const Page: NextPage = ({ params }: any) => {
 
   const isAdmin = address && owner && address === owner;
 
-  useEffect(() => {
-    if (isAdmin && !data) {
-      refetch();
-    }
-  }, [data, isAdmin, refetch]);
+  // useEffect(() => {
+  //   if (isAdmin && !data) {
+  //     refetch();
+  //   }
+  // }, [data, isAdmin, refetch]);
+
+  console.log({ data });
 
   return (
     <div className="flex max-w-2xl flex-col pt-10 m-auto gap-10 w-full p-4">

@@ -19,21 +19,8 @@ import scaffoldConfig from "~~/scaffold.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
 export const wagmiConfig = createConfig({
-  chains: [
-    arbitrum,
-    arbitrumSepolia,
-    base,
-    baseSepolia,
-    mainnet,
-    polygon,
-    polygonAmoy,
-    scroll,
-    scrollSepolia,
-    sepolia,
-    hardhat,
-    ...customEvmNetworks.map(getOrMapViemChain),
-  ],
-  ssr: true,
+  chains: [baseSepolia],
+  // ssr: true,
   client({ chain }) {
     return createClient({
       chain,
