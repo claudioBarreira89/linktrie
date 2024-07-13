@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import type { NextPage } from "next";
 // import { useWriteContract } from "wagmi";
 // import deployedContracts from "~~/contracts/deployedContracts";
@@ -9,6 +10,8 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
 
 const Home: NextPage = () => {
+  const router = useRouter();
+
   const [value, setValue] = useState("");
   const { writeContractAsync } = useScaffoldWriteContract("YourContract");
   // const { data: result, isPending, writeContractAsync } = useWriteContract();
@@ -24,6 +27,8 @@ const Home: NextPage = () => {
       functionName: "createProfile",
       args: [value],
     });
+
+    router.push(`/${value}`);
   };
 
   return (
@@ -42,7 +47,7 @@ const Home: NextPage = () => {
           </div>
           <div className="flex flex-grow flex-row gap-2 max-w-lg mt-8">
             <input
-              className="input min-w-32 max-w-64 w-full bg-white rounded-md"
+              className="input min-w-32 max-w-64 w-full bg-white rounded-md text-gray-900"
               placeholder="Insert value"
               value={value}
               onChange={e => setValue(e.target.value)}

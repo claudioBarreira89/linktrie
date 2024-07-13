@@ -126,7 +126,7 @@ const Page: NextPage = ({ params }: any) => {
               onChange={e => setLinkUrl(e.target.value)}
             />
 
-            <button className="btn" onClick={handleAddLink}>
+            <button className="btn btn-secondary" onClick={handleAddLink}>
               Submit
             </button>
           </div>
@@ -161,8 +161,8 @@ const LinkItem = ({
               <div tabIndex={0} role="button" className="px-2 py-1">
                 <EllipsisVerticalIcon className="w-6 h-6" />
               </div>
-              <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow">
-                <li onClick={() => handleRemoveLink(name)}>
+              <ul tabIndex={0} className="dropdown-content menu bg-white rounded-box z-[1] w-32 p-2 shadow">
+                <li onClick={() => handleRemoveLink(name)} className="hover:bg-gray-200 rounded-lg">
                   <a>Remove</a>
                 </li>
               </ul>
