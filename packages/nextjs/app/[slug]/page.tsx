@@ -63,7 +63,7 @@ const Page: NextPage = ({ params }: any) => {
   // const { writeContractAsync } = useScaffoldWriteContract("YourContract");
   // const { data: result, isPending, writeContractAsync } = useWriteContract();
 
-  const isAdmin = address === owner;
+  const isAdmin = address && owner && address === owner;
 
   return (
     <div className="flex max-w-2xl flex-col pt-10 m-auto gap-10 w-full p-4">
