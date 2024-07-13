@@ -32,7 +32,7 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-10 w-full bg-bggreen pt-24 pb-0 text-salad">
+    <div className="flex flex-col items-center gap-10 w-full bg-bggreen pt-24 px-10 pb-0 text-salad">
       <div className="max-w-[1350px] w-full flex gap-8">
         <div>
           <div className="flex flex-col gap-2 max-w-3xl">
