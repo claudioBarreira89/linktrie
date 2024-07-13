@@ -1,9 +1,6 @@
-import { getOrMapViemChain } from "@dynamic-labs/viem-utils";
-import { Chain, createClient, http } from "viem";
+import { createClient, http } from "viem";
 import { baseSepolia, sepolia } from "viem/chains";
 import { createConfig } from "wagmi";
-import { customEvmNetworks } from "~~/lib/networks";
-import scaffoldConfig from "~~/scaffold.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
 export const wagmiConfig = createConfig({
@@ -24,7 +21,7 @@ export const wagmiConfig = createConfig({
       networkId: 31,
     },
   ],
-  // ssr: true,
+  ssr: true,
   client({ chain }) {
     return createClient({
       chain,
