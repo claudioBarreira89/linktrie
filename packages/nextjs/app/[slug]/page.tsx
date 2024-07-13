@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import classNames from "classnames";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
@@ -13,11 +14,22 @@ import { notification } from "~~/utils/scaffold-eth";
 // import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 // import { notification } from "~~/utils/scaffold-eth";
 
+function ranNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const getNounUrl = () =>
+  `https://api.cloudnouns.com/v1/pfp?seed=${ranNum(0, 2)},${ranNum(0, 29)},${ranNum(0, 130)},${ranNum(0, 200)},${ranNum(
+    0,
+    20,
+  )}`;
+
 const Page: NextPage = ({ params }: any) => {
   const [openModal, setOpenModal] = useState(false);
 
   const [linkName, setLinkName] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+  const [nounSeed, setNounSeed] = useState(getNounUrl());
   const { address } = useAccount();
 
   const { data, isLoading, refetch } = useScaffoldReadContract({
@@ -60,6 +72,10 @@ const Page: NextPage = ({ params }: any) => {
     refetch();
   };
 
+  const generateNounSeed = async () => {
+    setNounSeed(getNounUrl());
+  };
+
   // const { writeContractAsync } = useScaffoldWriteContract("YourContract");
   // const { data: result, isPending, writeContractAsync } = useWriteContract();
 
@@ -74,6 +90,17 @@ const Page: NextPage = ({ params }: any) => {
   return (
     <div className="flex max-w-2xl flex-col pt-10 m-auto gap-10 w-full p-4">
       <div className="flex flex-col gap-6 text-center">
+        <div className="flex justify-center flex-col gap-3 items-center">
+          {!!nounSeed ? (
+            <Image height={96} width={96} className="rounded-full h-24 w-24" src={nounSeed} alt="Nouns profile" />
+          ) : (
+            <div className="h-24 w-24 bg-gray-300 rounded-full"></div>
+          )}
+          <button className="btn btn-secondary" onClick={generateNounSeed}>
+            Change your Noun
+          </button>
+        </div>
+
         <h1 className="text-5xl">@{params.slug}</h1>
 
         <div className="gap-4 flex flex-col">
