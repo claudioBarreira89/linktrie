@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-10 w-full bg-bggreen py-24 text-salad">
+    <div className="flex flex-col items-center gap-10 w-full bg-bggreen py-24 flex-1 px-10 text-salad">
       <div className="max-w-[1350px] w-full">
         <div className="flex flex-col gap-2 max-w-2xl">
           <h1 className="text-5xl font-bold">Everything you are. On-chain!</h1>
