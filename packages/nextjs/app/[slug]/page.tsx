@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
@@ -20,7 +20,7 @@ const Page: NextPage = ({ params }: any) => {
   const [linkUrl, setLinkUrl] = useState("");
   const { address } = useAccount();
 
-  const { data, refetch } = useScaffoldReadContract({
+  const { data, isLoading, refetch } = useScaffoldReadContract({
     contractName: "YourContract",
     functionName: "getUserProfileByTrie",
     args: [params.slug || ""],
@@ -65,12 +65,23 @@ const Page: NextPage = ({ params }: any) => {
 
   const isAdmin = address && owner && address === owner;
 
+  useEffect(() => {
+    if (isAdmin && !data) {
+      refetch();
+    }
+  }, [data, isAdmin, refetch]);
+
   return (
     <div className="flex max-w-2xl flex-col pt-10 m-auto gap-10 w-full p-4">
       <div className="flex flex-col gap-6 text-center">
         <h1 className="text-5xl">@{params.slug}</h1>
 
         <div className="gap-4 flex flex-col">
+          {isLoading && (
+            <div className="flex justify-center">
+              <div className="loading-spinner loading w-14" />
+            </div>
+          )}
           {linkNames?.map((name, i) => (
             <LinkItem
               key={i}

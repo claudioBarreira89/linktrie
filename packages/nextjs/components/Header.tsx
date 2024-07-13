@@ -85,7 +85,7 @@ export const Header = () => {
                   setIsDrawerOpen(false);
                 }}
               >
-                <HeaderMenuLinks />
+                {/* <HeaderMenuLinks /> */}
               </ul>
             )}
           </div>
@@ -97,9 +97,9 @@ export const Header = () => {
               <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
             </div>
           </Link>
-          <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
+          {/* <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
             <HeaderMenuLinks />
-          </ul>
+          </ul> */}
         </div>
         <div className="navbar-end flex-grow mr-4">
           <DynamicWidget />
