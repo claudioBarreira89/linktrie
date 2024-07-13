@@ -23,8 +23,6 @@ const Home: NextPage = () => {
       functionName: "createProfile",
       args: [value],
     });
-
-    notification.success("Profile created!");
   };
 
   return (
