@@ -1,5 +1,5 @@
 import { createClient, http } from "viem";
-import { baseSepolia, sepolia } from "viem/chains";
+import { baseSepolia, scrollSepolia, sepolia } from "viem/chains";
 import { createConfig } from "wagmi";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
@@ -7,6 +7,7 @@ export const wagmiConfig = createConfig({
   chains: [
     baseSepolia,
     sepolia,
+    scrollSepolia,
     {
       blockExplorerUrls: ["https://explorer.testnet.rsk.co"],
       chainId: 31,
