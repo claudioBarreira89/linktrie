@@ -1,12 +1,12 @@
-#  🏗 Scaffold-ETH 2 (Hackathon Starter Kit Version)
+#  Linktrie - Link everything you are. On chain.
 
-![](./banner.png)
+![project page](./banner.png)
 
 <h4 align="center">
-  <a href="https://www.youtube.com/watch?v=dkONR9dJD2g">Video Walkthrough</a>
+  <a href="https://ethglobal.com/showcase/linktrie-r0wx3">Project page</a>
 </h4>
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts as well as add EthGlobal partner technology such as account abstraction, chain abstraction, onboarding, transaction exploring, EVM networks, custom chains and much more!
+Linktrie is a decentralized link management platform built on Ethereum that empowers users to control their online identities and links. By leveraging blockchain technology, Linktrie offers a secure and transparent solution for creating customizable profiles with unique URLs, managing links, and controlling access to profile information.
 
 ## Requirements
 
