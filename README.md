@@ -11,6 +11,12 @@
 
 Linktrie is a decentralized link management platform built on Ethereum that empowers users to control their online identities and links. By leveraging blockchain technology, Linktrie offers a secure and transparent solution for creating customizable profiles with unique URLs, managing links, and controlling access to profile information.
 
+## Deoployments
+
+- Rootstock Sepolia: [explorer link](https://rootstock-testnet.blockscout.com/address/0x8511bB6DbbA24F59249274b3210a88d8D58dDE7b?tab=txs)
+- Scroll Sepolia: [explorer link](https://sepolia.scrollscan.com/address/0x8511bb6dbba24f59249274b3210a88d8d58dde7b#code)
+
+
 ## Requirements
 
 Before you begin, you need to install the following tools:
