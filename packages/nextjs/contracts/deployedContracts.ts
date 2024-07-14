@@ -538,6 +538,13 @@ const deployedContracts = {
       inheritedFunctions: linktrieInheritedFunctions,
     },
   },
+  534351: {
+    YourContract: {
+      address: "0x8511bb6dbba24f59249274b3210a88d8d58dde7b",
+      abi: linktrieAbi,
+      inheritedFunctions: linktrieInheritedFunctions,
+    },
+  },
 } as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
