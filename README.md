@@ -5,6 +5,9 @@
 <h4 align="center">
   <a href="https://ethglobal.com/showcase/linktrie-r0wx3">Project page</a>
 </h4>
+<h4 align="center">
+  <a href="https://linktrie.vercel.app/">Live demo</a>
+</h4>
 
 Linktrie is a decentralized link management platform built on Ethereum that empowers users to control their online identities and links. By leveraging blockchain technology, Linktrie offers a secure and transparent solution for creating customizable profiles with unique URLs, managing links, and controlling access to profile information.
 
